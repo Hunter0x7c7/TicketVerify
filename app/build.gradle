@@ -1,34 +1,55 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "25.0.0"
+    compileSdkVersion rootProject.ext.android["compileSdkVersion"]//14
+    buildToolsVersion rootProject.ext.android["buildToolsVersion"]//"25.0.1"
     defaultConfig {
         applicationId "com.ileiju.ticketverify"
-        minSdkVersion 14
-        targetSdkVersion 24
+        minSdkVersion rootProject.ext.android["minSdkVersion"]//14
+        targetSdkVersion rootProject.ext.android["targetSdkVersion"]//24
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
-            minifyEnabled false
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            zipAlignEnabled true//Zipalign优化
+            minifyEnabled true//混淆打包
+            shrinkResources true//去掉不用资源
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            minifyEnabled false
+        }
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'   // aar目录
+    }
+    maven {
+        url "https://jitpack.io"
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:24.+'
-    compile 'com.android.support:design:24.+'
-    compile 'com.android.support:cardview-v7:24.+'
+    compile rootProject.ext.dependencies["appcompat-v7"]
+    compile rootProject.ext.dependencies["design"]
+    compile rootProject.ext.dependencies["cardview-v7"]
+
+    compile rootProject.ext.dependencies["xutils"]
+    compile rootProject.ext.dependencies["gson"]
 
     //Beam——MVP快速开发框架https://github.com/Jude95/Beam
     compile 'com.jude:beam:3.0.1'
 
-    compile 'org.xutils:xutils:3.3.42'
-    compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.squareup.okhttp3:okhttp:3.1.2'
+    //Android6.0权限//    compile 'com.mylhyl:acp:1.1.7'
+    compile(name: 'PermissionACP', ext: 'aar')
+    //Dialog
+    compile(name: 'SimpleDialog', ext: 'aar')
 }

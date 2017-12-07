@@ -3,6 +3,7 @@ package com.ileiju.ticketverify.util;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 
+import com.ileiju.ticketverify.BuildConfig;
 import com.ileiju.ticketverify.base.BaseApplication;
 
 import java.util.Locale;
@@ -12,8 +13,11 @@ import java.util.Locale;
  * 描    述：有关配置信息的工具类
  */
 public class ConfigUtil extends Thread {
-    private static boolean defaultDebug = true;
-    private static boolean debugMode;
+    private static boolean defaultDebug ;
+
+    static {
+        defaultDebug = BuildConfig.LOG_DEBUG;
+    }
 
     /**
      * 获取远程服务器的ip地址
@@ -111,6 +115,6 @@ public class ConfigUtil extends Thread {
 
 
     public static boolean isDebugMode() {
-        return debugMode;
+        return defaultDebug;
     }
 }

@@ -1,11 +1,23 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <!-- Customize your theme here. -->
+    <!--<style name="AppTheme" parent="Theme.AppCompat.Light">-->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:windowAnimationStyle">@style/HandoffAnimation</item>
+    </style>
+
+
+    <!--切换动画 -->
+    <style name="HandoffAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/move_in_left</item>
+        <item name="android:activityOpenExitAnimation">@anim/move_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/exit_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/exit_out_left</item>
     </style>
 
 </resources>

@@ -30,15 +30,16 @@ public class MainActivity extends BaseActivity<MainPresenter> implements View.On
     public void initView() {
         super.initView();
 
+        setHomePageTitle("Verify");
 
-       Button btn_terminal = (Button) findViewById(R.id.btn_terminal);
-       Button btn_login = (Button) findViewById(R.id.btn_login);
+        Button btn_terminal = (Button) findViewById(R.id.btn_terminal);
+        Button btn_login = (Button) findViewById(R.id.btn_login);
 
         btn_terminal.setOnClickListener(this);
         btn_login.setOnClickListener(this);
     }
 
-    public void testGetTerminal( ) {
+    public void testGetTerminal() {
         try {
             new OkHttpUtil().testGetTerminal();
         } catch (Exception e) {
@@ -46,7 +47,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements View.On
         }
     }
 
-    public void testPostDlogin( ) {
+    public void testPostDlogin() {
         try {
             new OkHttpUtil().testPostDlogin();
         } catch (Exception e) {
@@ -57,7 +58,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements View.On
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btn_terminal:
 
                 testGetTerminal();

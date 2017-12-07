@@ -1,17 +1,25 @@
 package com.ileiju.ticketverify.module.splash;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.ileiju.ticketverify.R;
 import com.ileiju.ticketverify.base.BaseActivity;
+import com.ileiju.ticketverify.base.BaseApplication;
+import com.ileiju.ticketverify.listener.OnPermissionListener;
 import com.ileiju.ticketverify.module.main.MainActivity;
 import com.ileiju.ticketverify.util.NetworkUtil;
+import com.ileiju.ticketverify.util.PermissionUtil;
+import com.ileiju.ticketverify.util.SystemUtil;
 import com.ileiju.ticketverify.util.ToastUtil;
+
+import java.util.List;
 
 
 /**
@@ -68,6 +76,53 @@ public class SplashActivity extends BaseActivity {
     public void initData() {
         super.initData();
 
+        //请求需要的所有权限
+        String[] permissions = {
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        };
+        OnPermissionListener onPermissionListener = new OnPermissionListener() {
+            @Override
+            public void onGranted() {
+                //获得权限后初始化数据
+                initMyData();
+            }
+
+            @Override
+            public void onDenied(List<String> permissions) {
+                //没有权限
+                ToastUtil.showPrompt("您拒绝授权可用权限，应用即将退出");
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            SystemClock.sleep(2000);
+
+                            //退出程序
+                            BaseApplication.getInstance().exit();   //退出
+                        } catch (Exception e) {
+                            SystemUtil.println("error : " + e);
+                        }
+                    }
+                }.start();
+            }
+        };
+        requestPermission(onPermissionListener, permissions);
+    }
+
+    private void requestPermission(final OnPermissionListener onPermissionListener, final String... permissions) {
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                //申请需要的所有权限
+                PermissionUtil.request(onPermissionListener, permissions);
+            }
+        };
+        postDelayed(runnable, 100);
+    }
+
+    private void initMyData() {
         Runnable target = new Runnable() {
             @Override
             public void run() {
@@ -100,7 +155,6 @@ public class SplashActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
     }
-
 
     @Override
     public void onBackPressed() {

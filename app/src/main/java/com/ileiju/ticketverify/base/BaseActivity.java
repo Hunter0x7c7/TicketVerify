@@ -16,7 +16,6 @@ import com.ileiju.ticketverify.R;
 import com.jude.beam.bijection.Presenter;
 import com.jude.beam.expansion.BeamBaseActivity;
 
-
 /**
  */
 public abstract class BaseActivity<T extends Presenter> extends BeamBaseActivity<T> {
@@ -136,6 +135,15 @@ public abstract class BaseActivity<T extends Presenter> extends BeamBaseActivity
 
     /**
      * 设置标题
+     */
+    public void setHomePageTitle(String title) {
+        setCustomTitleBar(true);
+        mTitle.setText(title);
+        mTitle.setGravity(Gravity.LEFT);
+
+        setIsShowBack(false);
+    } /**
+     * 设置标题
      *
      * @param resId 标题名字Id
      */
@@ -177,8 +185,6 @@ public abstract class BaseActivity<T extends Presenter> extends BeamBaseActivity
 
     /**
      * 设置是否显示返回按键
-     *
-     * @param isShowBack
      */
     public void setIsShowBack(boolean isShowBack) {
         ibBack.setVisibility(isShowBack ? View.VISIBLE : View.GONE);
