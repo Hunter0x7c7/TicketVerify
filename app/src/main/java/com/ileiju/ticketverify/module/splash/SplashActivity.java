@@ -12,12 +12,14 @@ import android.view.WindowManager;
 import com.ileiju.ticketverify.R;
 import com.ileiju.ticketverify.base.BaseActivity;
 import com.ileiju.ticketverify.base.BaseApplication;
-import com.ileiju.ticketverify.listener.OnPermissionListener;
+import com.ileiju.ticketverify.interfaces.OnPermissionListener;
 import com.ileiju.ticketverify.module.main.MainActivity;
+import com.ileiju.ticketverify.module.main.MainModel;
 import com.ileiju.ticketverify.util.NetworkUtil;
 import com.ileiju.ticketverify.util.PermissionUtil;
 import com.ileiju.ticketverify.util.SystemUtil;
 import com.ileiju.ticketverify.util.ToastUtil;
+import com.jude.beam.bijection.RequiresPresenter;
 
 import java.util.List;
 
@@ -27,7 +29,8 @@ import java.util.List;
  * 描    述：程序入口
  */
 
-public class SplashActivity extends BaseActivity {
+@RequiresPresenter(SplashPresenter.class)
+public class SplashActivity extends BaseActivity<SplashPresenter> {
 
     private long mUptimeMillis;
     private int delayMillis = 1000 * 4;
@@ -60,6 +63,7 @@ public class SplashActivity extends BaseActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
+        MainModel.getInstance().onAppCreate(this);
     }
 
     @Override
@@ -143,6 +147,11 @@ public class SplashActivity extends BaseActivity {
                 finish();
             }
         }, 1000);
+
+
+
+
+
     }
 
 

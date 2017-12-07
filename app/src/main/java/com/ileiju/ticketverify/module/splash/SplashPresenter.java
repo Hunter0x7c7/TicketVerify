@@ -1,4 +1,4 @@
-package com.ileiju.ticketverify.module.main;
+package com.ileiju.ticketverify.module.splash;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,7 +10,7 @@ import com.jude.beam.bijection.Presenter;
  * Created by hunter on 17/12/6.
  */
 
-public class MainPresenter extends Presenter<BaseActivity> {
+public class SplashPresenter extends Presenter<BaseActivity> {
 
     @Override
     protected void onCreate(@NonNull BaseActivity view, Bundle savedState) {
@@ -20,7 +20,7 @@ public class MainPresenter extends Presenter<BaseActivity> {
         getModel();
     }
 
-    private MainModel getModel() {
-        return MainModel.getInstance();
+    private SplashModel getModel() {
+        return SplashModel.getInstance();
     }
 }

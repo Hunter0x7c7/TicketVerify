@@ -1,4 +1,4 @@
-package com.ileiju.ticketverify.listener;
+package com.ileiju.ticketverify.interfaces;
 
 import java.util.List;
 

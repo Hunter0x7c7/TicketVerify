@@ -11,7 +11,7 @@ import android.view.View;
 
 import com.hunter.dialog.SimpleDialog;
 import com.ileiju.ticketverify.base.BaseApplication;
-import com.ileiju.ticketverify.listener.OnPermissionListener;
+import com.ileiju.ticketverify.interfaces.OnPermissionListener;
 import com.mylhyl.acp.Acp;
 import com.mylhyl.acp.AcpListener;
 import com.mylhyl.acp.AcpOptions;
