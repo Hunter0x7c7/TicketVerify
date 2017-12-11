@@ -35,6 +35,7 @@ public abstract class BaseActivity<T extends Presenter> extends BeamBaseActivity
         initView();
         initData();
 
+        BaseModel.getInstance().onAppCreate(this);
         BaseApplication.getInstance().addActivity(this);   //创建Activity时，添加到List进行管理。
     }
 

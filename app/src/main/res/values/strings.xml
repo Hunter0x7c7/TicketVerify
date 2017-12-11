@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">TicketVerify</string>
     <string name="network_disabled">亲，您的手机网络不太顺畅哦~</string>
+    <string name="request_failure">网络不给力~</string>
+    <string name="request_error">网络不给力~</string>
+    <string name="click_2_exit">再按一次退出</string>
 
 </resources>

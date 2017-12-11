@@ -1,6 +1,14 @@
 package com.ileiju.ticketverify.util;
 
+import android.util.Log;
+
+import com.ileiju.ticketverify.interfaces.StatusCallback;
+import com.ileiju.ticketverify.interfaces.StatusCallback1;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +21,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * // Okhttp库Util
@@ -44,7 +54,7 @@ public class OkHttpUtil {
         hashMap.put("Referer", "http://my.12301.cc/");//
         hashMap.put("Accept-Encoding", "gzip, deflate");//
         hashMap.put("Accept-Language", "zh-CN,zh;q=0.8");
-      hashMap.put("Cookie", cookie);
+        hashMap.put("Cookie", cookie);
 
         //查询接口Cookie需要session id
         String url = "http://my.12301.cc/call/terminal.php?query=1&salerid=922190&voucher=624159";
@@ -86,7 +96,7 @@ public class OkHttpUtil {
     }
 
     public void testPostDlogin2() {
-         Map<String, String> hashMap1 = new LinkedHashMap<>();
+        Map<String, String> hashMap1 = new LinkedHashMap<>();
         hashMap1.put("passport", passport);
         hashMap1.put("password", password);
 
@@ -102,7 +112,7 @@ public class OkHttpUtil {
         hashMap2.put("Referer", "http://my.12301.cc/");//
         hashMap2.put("Accept-Encoding", "gzip, deflate");//
         hashMap2.put("Accept-Language", "zh-CN,zh;q=0.8");
-      hashMap2.put("Cookie", cookie);//
+        hashMap2.put("Cookie", cookie);//
 
         //登录接口Cookie需要session id  passport=cs033
         String url = "http://my.12301.cc/dlogin.php";
@@ -141,8 +151,9 @@ public class OkHttpUtil {
 
         postRequest(hashMap1, hashMap2, url, responseCallback);
     }
- public void testPostDlogin() {
-         Map<String, String> hashMap1 = new LinkedHashMap<>();
+
+    public void testPostDlogin() {
+        Map<String, String> hashMap1 = new LinkedHashMap<>();
         hashMap1.put("passport", passport);
         hashMap1.put("password", password);
 
@@ -158,14 +169,14 @@ public class OkHttpUtil {
         hashMap2.put("Referer", "http://my.12301.cc/");//
         hashMap2.put("Accept-Encoding", "gzip, deflate");//
         hashMap2.put("Accept-Language", "zh-CN,zh;q=0.8");
-      hashMap2.put("Cookie", cookie);//
+        hashMap2.put("Cookie", cookie);//
 
         //登录接口Cookie需要session id  passport=cs033
         String url = "http://my.12301.cc/dlogin.php";
 
 // data=%7B%22check%22%3A1%2C%22salerid%22%3A%22922190%22%2C%22ordernum%22%3A%2222973867%22%2C%22check_method%22%3A%220%22%2C%22list%22%3A%7B%2222973867%22%3A%221%22%7D%2C%22rtime%22%3A%22%22%7D
 
-     HttpCallback responseCallback = new HttpCallback() {
+        HttpCallback responseCallback = new HttpCallback() {
             @Override
             public void onFailure(Call call, Exception e) {
                 e.printStackTrace();
@@ -200,7 +211,7 @@ public class OkHttpUtil {
         postRequest(hashMap1, hashMap2, url, responseCallback);
     }
 
-    public static void getRequest(final Map<String, String> requestHeader
+    public static void getRequest(final Map<String, String> requestHeaders
             , final String url, final HttpCallback httpCallback) {
 
         Runnable target = new Runnable() {
@@ -210,8 +221,8 @@ public class OkHttpUtil {
                 OkHttpClient client = new OkHttpClient();
                 Request.Builder builder = new Request.Builder().url(url);
 
-                if (requestHeader != null) {
-                    Set<Map.Entry<String, String>> entrySet = requestHeader.entrySet();
+                if (requestHeaders != null) {
+                    Set<Map.Entry<String, String>> entrySet = requestHeaders.entrySet();
                     for (Map.Entry<String, String> entry : entrySet) {
                         if (entry == null) continue;
                         builder.addHeader(entry.getKey(), entry.getValue());
@@ -222,7 +233,7 @@ public class OkHttpUtil {
                 Headers headers = request.headers();
                 Set<String> names = headers.names();
                 for (String n : names)
-                    System.out.println("...headers:" + n + ":" + headers.get(n));
+                    System.out.println("request header:" + n + ":" + headers.get(n));
 
                 client.newCall(request).enqueue(new Callback() {
                     @Override
@@ -254,8 +265,8 @@ public class OkHttpUtil {
         new Thread(target).start();
     }
 
-    public static void postRequest(final Map<String, String> formBody
-            , final Map<String, String> requestHeader
+    public static void postRequest(final Map<String, String> requestHeader
+            , final Map<String, String> formBody
             , final String url, final HttpCallback httpCallback) {
 
         Runnable target = new Runnable() {
@@ -289,10 +300,17 @@ public class OkHttpUtil {
                 }
                 Request request = requestBuilder.build();
 
-                Headers headers = request.headers();
-                Set<String> names = headers.names();
+                FormBody body = (FormBody) request.body();
+                int size = body.size();
+                for (int i = 0; i < size; i++) {
+                    String name = body.name(i);
+                    String value = body.value(i);
+                    System.out.println("....FormBody:" + name + ":" + value);
+                }
+
+                Set<String> names = request.headers().names();
                 for (String n : names)
-                    System.out.println("...headers...." + n + ":" + headers.get(n));
+                    System.out.println("...headers...." + n + ":" + request.headers().get(n));
 
                 Callback callback = new Callback() {
 
@@ -309,12 +327,11 @@ public class OkHttpUtil {
                         try {
                             if (httpCallback != null) {
                                 body = response.body();
-                                System.out.println("...body:" +  body);
+                                System.out.println("...body:" + body);
 //                                System.out.println("...body:" + new Gson().toJson(body));
 
                                 String string = body.string();
                                 System.out.println("...string:" + string);
-                                System.out.println("...string:" + new String(string.getBytes("ISO8859-1"), "utf-8"));
                                 Headers headers1 = response.headers();
                                 httpCallback.onResponse(call, response, headers1, string);
                             }
@@ -339,19 +356,163 @@ public class OkHttpUtil {
         new Thread(target).start();
     }
 
-    public class HttpCallback {
+    public static class HttpCallback {
 
         public void onFailure(Call call, Exception exception) {
         }
 
-        public void onResponse(Call call, Response response, Headers headers, String restlt) {
+        public void onResponse(Call call, Response response, Headers headers, String result) {
         }
     }
 
 
+    /**
+     * 下载文件
+     *
+     * @param url 文件url
+     */
+    public static void downloadFile(String url
+            , final StatusCallback callBack) {
+
+        Request request = new Request.Builder().url(url).build();
+        new OkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, e.toString());
+                failedCallBack("下载失败", callBack);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                InputStream is = null;
+                byte[] buf = new byte[2048];
+                int len = 0;
+                try {
+                    long total = response.body().contentLength();
+                    // Log.e(TAG, "total------>" + total);
+                    SystemUtil.println("total------>" + total);
+                    long current = 0;
+                    is = response.body().byteStream();
+                    StringBuilder buffer = new StringBuilder();
+                    while ((len = is.read(buf)) != -1) {
+                        current += len;
+                        SystemUtil.println("current------>" + current);
+                        buffer.append(new String(buf, 0, len));
+                    }
+                    successCallBack(buffer.toString(), callBack);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    failedCallBack("下载失败", callBack);
+                } finally {
+                    try {
+                        if (is != null) {
+                            is.close();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            private void failedCallBack(String result, StatusCallback callBack) {
+                if (callBack != null) {
+                    callBack.result(-1, result);
+                }
+            }
+
+            private void successCallBack(String file, StatusCallback callBack) {
+                if (callBack != null) {
+                    callBack.success(file);
+                }
+            }
+        });
+    }
+
+    /**
+     * 下载文件
+     *
+     * @param url         文件url
+     * @param destFileDir 存储目标目录
+     */
+    public static void downloadFile(String url, final String destFileDir
+            , String fileName, final StatusCallback1<File> callBack) {
+
+        File fileDir = new File(destFileDir);
+        if (!fileDir.exists()) {
+            fileDir.mkdirs();
+        }
+
+        final File file = new File(destFileDir, fileName);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        Request request = new Request.Builder().url(url).build();
+        new OkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, e.toString());
+                failedCallBack("下载失败", callBack);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                InputStream is = null;
+                byte[] buf = new byte[2048];
+                int len = 0;
+                FileOutputStream fos = null;
+                try {
+                    long total = response.body().contentLength();
+                    // Log.e(TAG, "total------>" + total);
+                    System.out.println("total------>" + total);
+                    long current = 0;
+                    is = response.body().byteStream();
+                    fos = new FileOutputStream(file);
+                    StringBuilder buffer = new StringBuilder();
+                    while ((len = is.read(buf)) != -1) {
+                        current += len;
+                        fos.write(buf, 0, len);
+                        //  Log.e(TAG, "current------>" + current);
+                        System.out.println("current------>" + current);
+                        //  progressCallBack(total, current, callBack);
+                        buffer.append(new String(buf, 0, len));
+                    }
+                    fos.flush();
+                    successCallBack(file, callBack);
+
+                    System.out.println("------>buffer:" + buffer.toString());
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    failedCallBack("下载失败", callBack);
+                } finally {
+                    try {
+                        if (is != null) {
+                            is.close();
+                        }
+                        if (fos != null) {
+                            fos.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            private void failedCallBack(String result, StatusCallback1<File> callBack) {
+                if (callBack != null) {
+                    callBack.result(-1, result);
+                }
+            }
+
+            private void successCallBack(File file, StatusCallback1<File> callBack) {
+                if (callBack != null) {
+                    callBack.success(file);
+                }
+            }
+        });
+    }
+
 }
 
-//data={"check":1,"salerid":"922190","ordernum":"22973867","check_method":"0","list":{"22973867":"1"},"rtime":""}
-//验证
-
-//{"status":"fail","msg":"请先登录后再操作","code":0}

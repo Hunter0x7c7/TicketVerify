@@ -1,44 +1,28 @@
 package com.ileiju.ticketverify.module.splash;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
-import com.google.gson.Gson;
+import com.ileiju.ticketverify.base.BaseModel;
 import com.ileiju.ticketverify.interfaces.StatusCallback;
-import com.ileiju.ticketverify.util.ToastUtil;
-import com.jude.beam.model.AbsModel;
+import com.ileiju.ticketverify.util.OkHttpUtil;
+import com.ileiju.ticketverify.util.StringUtil;
+import com.ileiju.ticketverify.util.SystemUtil;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
+import okhttp3.Call;
 import okhttp3.Headers;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
-import retrofit2.http.Query;
+import okhttp3.Response;
 
 /**
  * Created by hunter on 17/12/6.
  */
 
-public class SplashModel extends AbsModel {
+public class SplashModel extends BaseModel {
 
-    private Context mContext;
 
     public static SplashModel getInstance() {
         return getInstance(SplashModel.class);
@@ -48,194 +32,78 @@ public class SplashModel extends AbsModel {
     public void onAppCreate(Context ctx) {
         super.onAppCreate(ctx);
 
-        mContext = ctx;
     }
 
+    public void getSessionID(final String url, final StatusCallback  callback) {
 
-    //以下全都是面向上层的接口。这里全都是回调形式的异步返回。
-    public void userLogin(final String userName, final String password, final StatusCallback<String> callback) {
-        //这里是向网络请求数据，并接受返回数据，解析返回上层。这里我在Callback里完成数据解析。让代码更简洁。
-//        RequestManager.getInstance().post(API.URL.ModifyName, new RequestMap("password", password), callback);
+        Map<String, String> requestHeaders = new LinkedHashMap<>();
+        requestHeaders.put("Host", "my.12301.cc");//
+        requestHeaders.put("Connection", "keep-alive");
+        requestHeaders.put("Upgrade-Insecure-Requests", "1");
+        requestHeaders.put("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.104 Safari/537.36 Core/1.53.4033.400 QQBrowser/9.6.12624.400");
+        requestHeaders.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+        requestHeaders.put("Accept-Encoding", "gzip, deflate, sdch");//
+        requestHeaders.put("Accept-Language", "zh-CN,zh;q=0.8");
 
-        System.out.println(".userLogin......userName:" + userName + " password:" + password + " callback:" + callback);
-
-        final Retrofit retrofitDlogin = new Retrofit.Builder()
-                .baseUrl("http://my.12301.cc")
-                //增加返回值为String的支持
-                .addConverterFactory(ScalarsConverterFactory.create())
-                //增加返回值为Gson的支持(以实体类返回)
-                .addConverterFactory(GsonConverterFactory.create())
-                //增加返回值为Oservable<T>的支持
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
-
-        RequestSerives requestSerives = retrofitDlogin.create(RequestSerives.class);//这里采用的是Java的动态代理模式
-        Callback<ResponseBody> bodyCallback = new Callback<ResponseBody>() {
-
+        OkHttpUtil.HttpCallback responseCallback = new OkHttpUtil.HttpCallback() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call call, Response response, Headers headers, String result) {
 
-                try {
-                    Headers headers = response.headers();
-                    Set<String> names = headers.names();
-                    for (String name : names) {
-                        System.out.println(".............next:" + name + ":" + headers.values(name));
-                    }
-                    ToastUtil.showPrompt("....response:" + new Gson().toJson(response.message()));
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    call.cancel();
+                String sessionId = parseSessionID(headers);
+                if (callback != null) {
+                    callback.success(sessionId);
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                System.out.println(".......失败.......t:" + t.getMessage() + " call:" + call.toString());
+            public void onFailure(Call call, Exception exception) {
+                super.onFailure(call, exception);
+                if (callback != null) {
+                    callback.result(-1, exception.getMessage());
+                }
             }
         };
-        requestSerives.dlogin().enqueue(bodyCallback);
-        requestSerives.terminal("1", "922190", "624159").enqueue(bodyCallback);
 
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://shuihuo.tyuniot.com")
-                //增加返回值为String的支持
-                .addConverterFactory(ScalarsConverterFactory.create())
-                //增加返回值为Gson的支持(以实体类返回)
-                .addConverterFactory(GsonConverterFactory.create())
-                //增加返回值为Oservable<T>的支持
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
-
-        RequestSerives apiService = retrofit.create(RequestSerives.class);
-        apiService.login3(userName, password, "1")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<LoginBean>() {
-                    @Override
-                    public void accept(LoginBean loginBean) {
-                        System.out.println("......doOnNext........:" + new Gson().toJson(loginBean.Data));
-                        ToastUtil.showPrompt("....doOnNext...........:" + new Gson().toJson(loginBean.Data));
-                    }
-                })
-                //                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<LoginBean>() {
-                    @Override
-                    public void accept(LoginBean loginBean) {
-
-                        System.out.println("......subscribe.....accept...:" + new Gson().toJson(loginBean.Data));
-                        ToastUtil.showPrompt("....subscribe.....accept......:" + new Gson().toJson(loginBean.Data));
-                        if (callback != null) {
-                            callback.success(new Gson().toJson(loginBean));
-                        }
-//                        if (callback != null) {
-//                            callback.result(1 + (int) (System.currentTimeMillis() % 2), "");
-//                        }
-                    }
-                });
-
-
+        OkHttpUtil.getRequest(requestHeaders, url, responseCallback);
     }
 
+    @Nullable
+    private String parseSessionID(Headers headers) {
+        //返回头: Set-Cookie: PHPSESSID=dlnvo88jipgr82q9m4vioegt01; path=/; domain=.12301.cc
+        Set<String> names = headers.names();
+        String sessionHeader = "Set-Cookie";
+        String sessId = "PHPSESSID";
+        String sessionValue = null;
+        for (String name : names) {
+            SystemUtil.println("result header:" + name + ":" + headers.get(name));
 
+            if (name == null) continue;
+            if (name.equals(sessionHeader)) {
+                String value = headers.get(name);
 
-    public void userLogin(final String userName, final String password) {
+                if (value != null && value.contains(sessId)) {
+                    sessionValue = headers.get(name);
+                    break;
+                }
+            }
+        }
 
+        //PHPSESSID=e6dijmf02cffjth4dan5s2vv41; path=/; domain=.12301.cc
+        String sessionId = null;
+        if (sessionValue != null) {
 
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://shuihuo.tyuniot.com")
-                //增加返回值为String的支持
-                .addConverterFactory(ScalarsConverterFactory.create())
-                //增加返回值为Gson的支持(以实体类返回)
-                .addConverterFactory(GsonConverterFactory.create())
-                //增加返回值为Oservable<T>的支持
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
-
-
-        RequestSerives apiService = retrofit.create(RequestSerives.class);
-        apiService.login3(userName, password, "1")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<LoginBean>() {
-                    @Override
-                    public void accept(LoginBean loginBean) {
-                        System.out.println("......doOnNext........:" + new Gson().toJson(loginBean.Data));
-                        ToastUtil.showPrompt("....doOnNext........");
+            String[] strings = StringUtil.splitString(sessionValue, ";");
+            for (String sess : strings) {
+                if (sess.startsWith(sessId + "=")) {
+                    String[] split = StringUtil.splitString(sess, "=");
+                    if (split != null && split.length >= 2) {
+                        sessionId = split[1];
+                        break;
                     }
-                })
-//                    .unsubscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<LoginBean>() {
-                    @Override
-                    public void accept(LoginBean loginBean) {
-
-                        ToastUtil.showPrompt("....subscribe.......accept...:" + new Gson().toJson(loginBean.Data));
-                        try {
-                            System.out.println("......subscribe.....accept...:" + new Gson().toJson(loginBean.Data));
-//                                if (callback != null) {
-//                                    callback.success(new Gson().toJson(loginBean));
-//                                }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-
-    }
-
-    public interface RequestSerives {
-        /**
-         * 表明是一个表单格式的请求（Content-Type:application/x-www-form-urlencoded）
-         * <code>Field("username")</code> 表示将后面的 <code>String name</code> 中name的取值作为 username 的值
-         */
-        @POST("/form")
-        @FormUrlEncoded
-        Call<ResponseBody> testFormUrlEncoded1(@Field("username") String name, @Field("age") int age);
-
-        /**
-         * {@link Part} 后面支持三种类型，{@link RequestBody}、{@link okhttp3.MultipartBody.Part} 、任意类型
-         * 除 {@link okhttp3.MultipartBody.Part} 以外，其它类型都必须带上表单字段({@link okhttp3.MultipartBody.Part} 中已经包含了表单字段的信息)，
-         */
-        @POST("/form")
-        @Multipart
-        Call<ResponseBody> testFileUpload1(@Part("name") RequestBody name, @Part("age") RequestBody age, @Part MultipartBody.Part file);
-
-        @POST("/login/Login")
-        Call<LoginBean> login(@Query("param1") String userName, @Query("param2") String password, @Query("flag") String flag);
-
-        @POST("/login/Login")
-        Call<ResponseBody> login2(@Query("param1") String userName, @Query("param2") String password, @Query("flag") String flag);
-
-        @POST("/login/Login")
-        Observable<LoginBean> login3(@Query("param1") String userName, @Query("param2") String password, @Query("flag") String flag);
-
-        @GET("/dlogin_n.html")
-        Call<ResponseBody> dlogin();
-
-        @GET("/call/terminal.php")
-        Call<ResponseBody> terminal(@Query("query") String query, @Query("salerid") String salerid, @Query("voucher") String voucher);
-    }
-
-    public class LoginBean {
-        public String Code;
-        public String Msg;
-        public DataBean Data;
-    }
-
-    public class DataBean {
-        private int User_ID;
-        private String User_Name;
-        private String User_Phone;
-        private String User_Type;
-        private String User_Role;
-        private int User_Region_ID;
-        private String User_Region;
-        private String Access_Token;
-        private String User_Status;
+                }
+            }
+        }
+        return sessionId;
     }
 
 
