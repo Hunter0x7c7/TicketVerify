@@ -6,6 +6,7 @@ import com.ileiju.ticketverify.base.BaseModel;
 import com.ileiju.ticketverify.global.ServiceInfo;
 import com.ileiju.ticketverify.interfaces.HttpCallback;
 import com.ileiju.ticketverify.interfaces.StatusCallback;
+import com.ileiju.ticketverify.module.splash.SplashModel;
 import com.ileiju.ticketverify.util.HttpURLConnUtil;
 
 import java.util.LinkedHashMap;
@@ -128,7 +129,10 @@ public class MainModel extends BaseModel {
 
             }
         };
-         HttpURLConnUtil.post (requestHeaders, formBody, url, httpCallback);
+        // HttpURLConnUtil.post (requestHeaders, formBody, url, httpCallback);
+
+
+        SplashModel.getInstance().getEncryptPassword();
     }
 
 

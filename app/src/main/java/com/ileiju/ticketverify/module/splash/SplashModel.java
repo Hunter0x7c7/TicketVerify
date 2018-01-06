@@ -5,11 +5,13 @@ import android.support.annotation.Nullable;
 
 import com.ileiju.ticketverify.base.BaseModel;
 import com.ileiju.ticketverify.interfaces.StatusCallback;
+import com.ileiju.ticketverify.util.JsonUtil;
 import com.ileiju.ticketverify.util.OkHttpUtil;
 import com.ileiju.ticketverify.util.StringUtil;
 import com.ileiju.ticketverify.util.SystemUtil;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,7 +36,7 @@ public class SplashModel extends BaseModel {
 
     }
 
-    public void getSessionID(final String url, final StatusCallback  callback) {
+    public void getSessionID(final String url, final StatusCallback callback) {
 
         Map<String, String> requestHeaders = new LinkedHashMap<>();
         requestHeaders.put("Host", "my.12301.cc");//
@@ -104,6 +106,51 @@ public class SplashModel extends BaseModel {
             }
         }
         return sessionId;
+    }
+
+    public void getEncryptPassword() {
+//        String url  = "https://github.com/HunterHuang0X7C7/HunterServer/blob/master/TicketVerify.txt";
+        String url = "https://raw.githubusercontent.com/Hunter0X7C7/HunterServer/master/TicketVerify.txt";
+
+        OkHttpUtil.downloadFile(url, new StatusCallback() {
+            @Override
+            public void success(String result) {
+
+                System.out.println("...getEncryptPassword...result:" + result);
+                String html = StringUtil.replaceHtml(result);
+                String json = StringUtil.html2Text(html);
+                try {
+
+                    System.out.println("...getEncryptPassword...json:" + json);
+                    PasswordBean passwordBean = JsonUtil.fromJson(json, PasswordBean.class);
+
+                    System.out.println("....code:" + passwordBean.code);
+                    System.out.println("....msg:" + passwordBean.msg);
+                    for (DataBean db : passwordBean.data) {
+                        System.out.println("....data:" + db.key + " = " + db.value);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void result(int status, String result) {
+                System.out.println("..f..result:" + result);
+            }
+        });
+    }
+
+    public class PasswordBean {
+        private int code;
+        private String msg;
+        private List<DataBean> data;
+    }
+
+    public class DataBean {
+        private String key;
+        private String value;
     }
 
 

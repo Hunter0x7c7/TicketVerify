@@ -7,9 +7,6 @@ import com.ileiju.ticketverify.global.ServiceInfo;
 import com.ileiju.ticketverify.interfaces.HttpCallback;
 import com.ileiju.ticketverify.interfaces.StatusCallback;
 import com.ileiju.ticketverify.util.HttpURLConnUtil;
-import com.ileiju.ticketverify.util.JsonUtil;
-import com.ileiju.ticketverify.util.OkHttpUtil;
-import com.ileiju.ticketverify.util.StringUtil;
 import com.ileiju.ticketverify.util.SystemUtil;
 
 import java.util.LinkedHashMap;
@@ -131,50 +128,6 @@ public class LoginModel extends BaseModel {
             }
         };
         HttpURLConnUtil.get(requestHeaders, url, httpCallback);
-    }
-
-    private void getEncryptPassword() {
-        String url  = "https://github.com/HunterHuang0X7C7/HunterServer/blob/master/TicketVerify.txt";
-
-        OkHttpUtil.downloadFile(url , new StatusCallback() {
-            @Override
-            public void success(String result) {
-
-                String html = StringUtil.replaceHtml(result);
-                String json = StringUtil.html2Text(html);
-                try {
-
-                    System.out.println("......json:" + json);
-                    PasswordBean passwordBean = JsonUtil.fromJson(json, PasswordBean.class);
-
-                    System.out.println("....code:" + passwordBean.code);
-                    System.out.println("....msg:" + passwordBean.msg);
-                    for ( DataBean db : passwordBean.data) {
-                        System.out.println("....data:" + db.key + " = " + db.value);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void result(int status, String result) {
-                System.out.println("..f..result:" + result);
-            }
-        });
-    }
-
-
-    public class PasswordBean {
-        private int code;
-        private String msg;
-        private List<DataBean> data;
-    }
-
-    public class DataBean {
-        private String key;
-        private String value;
     }
 
 
