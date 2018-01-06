@@ -61,7 +61,7 @@ public class NetworkUtil {
      */
     public static String getWifiSSID() {
         String wifiSSID = "";
-        WifiManager wifiMgr = (WifiManager) BaseApplication.getContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
 //        int wifiState = wifiMgr.getWifiState();
         if (isWifiEnabled()) {
@@ -87,7 +87,7 @@ public class NetworkUtil {
      */
     public static int getWifiRSSI() {
         int wifiRSSI = -1000;
-        WifiManager wifiMgr = (WifiManager) BaseApplication.getContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (isWifiEnabled()) {
             WifiInfo info = wifiMgr.getConnectionInfo();
             wifiRSSI = info.getRssi();
@@ -101,7 +101,7 @@ public class NetworkUtil {
      * @return 返回IP地址，如:192.168.1.1
      */
     public static String getWifiIp() {
-        Context myContext = BaseApplication.getContext();
+        Context myContext = getApplicationContext();
         WifiManager wifiMgr = (WifiManager) myContext.getSystemService(Context.WIFI_SERVICE);
         if (isWifiEnabled()) {
             int ipAsInt = wifiMgr.getConnectionInfo().getIpAddress();
@@ -122,13 +122,17 @@ public class NetworkUtil {
      */
     public static String getWifiIp2() {
         String ip = null;
-        WifiManager wifiManager = (WifiManager) BaseApplication.getContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         if (wifiInfo != null && wifiInfo.getNetworkId() > -1) {
             int i = wifiInfo.getIpAddress();
             ip = String.format("%d.%d.%d.%d", i & 0xff, i >> 8 & 0xff, i >> 16 & 0xff, i >> 24 & 0xff);
         }
         return ip;
+    }
+
+    private static Context getApplicationContext() {
+        return BaseApplication.getContext().getApplicationContext();
     }
 
     /**
@@ -138,7 +142,7 @@ public class NetworkUtil {
      */
     public static String getBroadcastAddress() {
         String ip = null;
-        WifiManager wifiManager = (WifiManager) BaseApplication.getContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         if (wifiInfo != null && wifiInfo.getNetworkId() > -1) {
             int i = wifiInfo.getIpAddress();
@@ -153,7 +157,7 @@ public class NetworkUtil {
      * @return true为可用，false为不可用
      */
     public static boolean isWifiEnabled() {
-        Context myContext = BaseApplication.getContext();
+        Context myContext = getApplicationContext();
         WifiManager wifiMgr = (WifiManager) myContext.getSystemService(Context.WIFI_SERVICE);
         if (wifiMgr.getWifiState() == WifiManager.WIFI_STATE_ENABLED) {
             ConnectivityManager connManager = (ConnectivityManager) myContext
