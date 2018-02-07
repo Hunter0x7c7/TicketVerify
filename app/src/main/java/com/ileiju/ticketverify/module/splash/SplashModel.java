@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.ileiju.ticketverify.base.BaseModel;
-import com.ileiju.ticketverify.interfaces.StatusCallback;
+import com.ileiju.ticketverify.interfaces.StringCallback;
 import com.ileiju.ticketverify.util.JsonUtil;
 import com.ileiju.ticketverify.util.OkHttpUtil;
 import com.ileiju.ticketverify.util.StringUtil;
@@ -22,7 +22,6 @@ import okhttp3.Response;
 /**
  * Created by hunter on 17/12/6.
  */
-
 public class SplashModel extends BaseModel {
 
 
@@ -36,7 +35,7 @@ public class SplashModel extends BaseModel {
 
     }
 
-    public void getSessionID(final String url, final StatusCallback callback) {
+    public void getSessionID(final String url, final StringCallback callback) {
 
         Map<String, String> requestHeaders = new LinkedHashMap<>();
         requestHeaders.put("Host", "my.12301.cc");//
@@ -112,7 +111,7 @@ public class SplashModel extends BaseModel {
 //        String url  = "https://github.com/HunterHuang0X7C7/HunterServer/blob/master/TicketVerify.txt";
         String url = "https://raw.githubusercontent.com/Hunter0X7C7/HunterServer/master/TicketVerify.txt";
 
-        OkHttpUtil.downloadFile(url, new StatusCallback() {
+        OkHttpUtil.downloadFile(url, new StringCallback() {
             @Override
             public void success(String result) {
 
@@ -136,9 +135,10 @@ public class SplashModel extends BaseModel {
             }
 
             @Override
-            public void result(int status, String result) {
-                System.out.println("..f..result:" + result);
+            public void result(int status, String e) {
+
             }
+
         });
     }
 

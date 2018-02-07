@@ -2,8 +2,8 @@ package com.ileiju.ticketverify.util;
 
 import android.util.Log;
 
-import com.ileiju.ticketverify.interfaces.StatusCallback;
-import com.ileiju.ticketverify.interfaces.StatusCallback1;
+import com.ileiju.ticketverify.interfaces.GenericCallback;
+import com.ileiju.ticketverify.interfaces.StringCallback;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -372,7 +372,7 @@ public class OkHttpUtil {
      * @param url 文件url
      */
     public static void downloadFile(String url
-            , final StatusCallback callBack) {
+            , final StringCallback callBack) {
 
         Request request = new Request.Builder().url(url).build();
         new OkHttpClient().newCall(request).enqueue(new Callback() {
@@ -414,13 +414,13 @@ public class OkHttpUtil {
                 }
             }
 
-            private void failedCallBack(String result, StatusCallback callBack) {
+            private void failedCallBack(String result, StringCallback callBack) {
                 if (callBack != null) {
                     callBack.result(-1, result);
                 }
             }
 
-            private void successCallBack(String file, StatusCallback callBack) {
+            private void successCallBack(String file, StringCallback callBack) {
                 if (callBack != null) {
                     callBack.success(file);
                 }
@@ -435,7 +435,7 @@ public class OkHttpUtil {
      * @param destFileDir 存储目标目录
      */
     public static void downloadFile(String url, final String destFileDir
-            , String fileName, final StatusCallback1<File> callBack) {
+            , String fileName, final GenericCallback<File> callBack) {
 
         File fileDir = new File(destFileDir);
         if (!fileDir.exists()) {
@@ -500,13 +500,13 @@ public class OkHttpUtil {
                 }
             }
 
-            private void failedCallBack(String result, StatusCallback1<File> callBack) {
+            private void failedCallBack(String result, GenericCallback<File> callBack) {
                 if (callBack != null) {
-                    callBack.result(-1, result);
+                    callBack.result(-1, new Exception(result));
                 }
             }
 
-            private void successCallBack(File file, StatusCallback1<File> callBack) {
+            private void successCallBack(File file, GenericCallback<File> callBack) {
                 if (callBack != null) {
                     callBack.success(file);
                 }

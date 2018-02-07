@@ -4,8 +4,9 @@ import android.content.Context;
 
 import com.ileiju.ticketverify.base.BaseModel;
 import com.ileiju.ticketverify.global.ServiceInfo;
+import com.ileiju.ticketverify.interfaces.GenericCallback;
 import com.ileiju.ticketverify.interfaces.HttpCallback;
-import com.ileiju.ticketverify.interfaces.StatusCallback;
+import com.ileiju.ticketverify.interfaces.StringCallback;
 import com.ileiju.ticketverify.util.HttpURLConnUtil;
 import com.ileiju.ticketverify.util.SystemUtil;
 
@@ -32,7 +33,7 @@ public class LoginModel extends BaseModel {
     /**
      * 登录
      */
-    public void login(String userName, String password, final StatusCallback callback) {
+    public void login(String userName, String password, final StringCallback callback) {
 
         String pass = encryptPassword(password);
         if (pass == null) {
@@ -91,7 +92,7 @@ public class LoginModel extends BaseModel {
     /**
      * 退出登录
      */
-    public void logout(final StatusCallback callback) {
+    public void logout(final GenericCallback<String> callback) {
 
         //退出登录接口url
         String url = "http://my.12301.cc/call/handle.php?from=logout";
@@ -123,7 +124,7 @@ public class LoginModel extends BaseModel {
             public void onFailure(Exception exception) {
                 SystemUtil.println(exception.getMessage());
                 if (callback != null) {
-                    callback.result(-1, exception.getMessage());
+                    callback.result(-1, exception);
                 }
             }
         };

@@ -15,7 +15,7 @@ import com.ileiju.ticketverify.base.BaseActivity;
 import com.ileiju.ticketverify.base.BaseApplication;
 import com.ileiju.ticketverify.global.ServiceInfo;
 import com.ileiju.ticketverify.interfaces.OnPermissionListener;
-import com.ileiju.ticketverify.interfaces.StatusCallback;
+import com.ileiju.ticketverify.interfaces.StringCallback;
 import com.ileiju.ticketverify.module.login.LoginActivity;
 import com.ileiju.ticketverify.util.NetworkUtil;
 import com.ileiju.ticketverify.util.PermissionUtil;
@@ -186,7 +186,7 @@ public class SplashActivity extends BaseActivity<SplashPresenter> {
 
 
     //以下全都是面向上层的接口。这里全都是回调形式的异步返回。
-    public void userLogin(final String userName, final String password, final StatusCallback callback) {
+    public void userLogin(final String userName, final String password, final StringCallback callback) {
         //这里是向网络请求数据，并接受返回数据，解析返回上层。这里我在Callback里完成数据解析。让代码更简洁。
 //        RequestManager.getInstance().post(API.URL.ModifyName, new RequestMap("password", password), callback);
 

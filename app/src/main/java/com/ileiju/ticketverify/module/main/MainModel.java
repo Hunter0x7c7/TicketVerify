@@ -5,7 +5,7 @@ import android.content.Context;
 import com.ileiju.ticketverify.base.BaseModel;
 import com.ileiju.ticketverify.global.ServiceInfo;
 import com.ileiju.ticketverify.interfaces.HttpCallback;
-import com.ileiju.ticketverify.interfaces.StatusCallback;
+import com.ileiju.ticketverify.interfaces.StringCallback;
 import com.ileiju.ticketverify.module.splash.SplashModel;
 import com.ileiju.ticketverify.util.HttpURLConnUtil;
 
@@ -32,7 +32,7 @@ public class MainModel extends BaseModel {
 
 
     public void queryTicket(String salerid, String voucher
-            , final StatusCallback callback) {
+            , final StringCallback callback) {
 
         ServiceInfo info = ServiceInfo.getInstance();
 
@@ -71,7 +71,7 @@ public class MainModel extends BaseModel {
             @Override
             public void onFailure(Exception exception) {
                 if (callback != null) {
-                    callback.result(-1, exception.getMessage());
+                    callback.result(-1, exception.getMessage() );
                 }
             }
         };
@@ -85,7 +85,7 @@ public class MainModel extends BaseModel {
      * @param ordernum 订单号码
      * @param callback
      */
-    public void verify(String salerid, String ordernum, StatusCallback callback) {
+    public void verify(String salerid, String ordernum, StringCallback callback) {
 
         ServiceInfo info = ServiceInfo.getInstance();
 

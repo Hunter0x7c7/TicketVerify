@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.ileiju.ticketverify.R;
 import com.ileiju.ticketverify.base.BasePresenter;
-import com.ileiju.ticketverify.interfaces.StatusCallback;
+import com.ileiju.ticketverify.interfaces.StringCallback;
 import com.ileiju.ticketverify.util.JsonUtil;
 import com.ileiju.ticketverify.util.SystemUtil;
 
@@ -27,7 +27,7 @@ public class LoginPresenter extends BasePresenter<LoginActivity> {
     public void login(String userName, String password) {
 
 
-        StatusCallback  callback = new StatusCallback () {
+        StringCallback callback = new StringCallback() {
             @Override
             public void success(String info) {
                 loginSucceed(info);

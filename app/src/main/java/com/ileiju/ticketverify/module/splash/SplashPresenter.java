@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.ileiju.ticketverify.base.BasePresenter;
-import com.ileiju.ticketverify.interfaces.StatusCallback;
+import com.ileiju.ticketverify.interfaces.StringCallback;
 
 /**
  * Created by hunter on 17/12/6.
@@ -22,7 +22,7 @@ public class SplashPresenter extends BasePresenter<SplashActivity> {
     }
 
     public void getSessionID(String url) {
-        StatusCallback callback = new StatusCallback() {
+        StringCallback callback = new StringCallback() {
             @Override
             public void success(String info) {
 

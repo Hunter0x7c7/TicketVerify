@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.ileiju.ticketverify.base.BasePresenter;
-import com.ileiju.ticketverify.interfaces.StatusCallback;
+import com.ileiju.ticketverify.interfaces.StringCallback;
 import com.ileiju.ticketverify.module.main.bean.QueryBean;
 import com.ileiju.ticketverify.util.JsonUtil;
 
@@ -30,7 +30,7 @@ public class MainPresenter extends BasePresenter<MainActivity> {
 
     public void queryTicket(String salerid, String voucher) {
 
-        StatusCallback callback = new StatusCallback () {
+        StringCallback callback = new StringCallback() {
             @Override
             public void success(String info) {
                 queryTicketSucceed(info);
@@ -48,7 +48,7 @@ public class MainPresenter extends BasePresenter<MainActivity> {
 
     public void verify(String salerid, String ordernum) {
 
-        getModel().verify(salerid, ordernum, new StatusCallback () {
+        getModel().verify(salerid, ordernum, new StringCallback() {
 
 
             @Override
